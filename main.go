@@ -31,21 +31,59 @@ type question struct {
 
 var nextQuestion int = 1
 
+var allQuestions map[int]question
+
 func incrimentNextQuestion() int {
 	nextQuestion++
 	return nextQuestion
 }
 
-func initialQuestionList() []question {
+func initialQuestionList() {
 	q1 := question{Id: 1, Name: "Elephant", Question: "Is it a mamal?", Yes: 0, No: 2}
 	q2 := question{Id: 2, Name: "Shark"}
 
-	var questions []question = []question{q1, q2}
-	return questions
+	var questions = map[int]question{1: q1, 2: q2}
+	allQuestions = questions
+}
+
+func finalGuess(question question) {
+	fmt.Println("Is it a", question.Name)
+	var guess string
+	fmt.Scanln(&guess)
+	if guess == "yes" {
+		fmt.Println("Woo Hoo, I win")
+	} else {
+		fmt.Println("Congratulations, you win")
+	}
+}
+
+func gameRound(startingQuestion int) {
+	var quest = allQuestions[startingQuestion]
+	if quest.Question == "" {
+		finalGuess(quest)
+		return
+	}
+	fmt.Println(quest.Question)
+	var guess string
+	fmt.Scanln(&guess)
+	if guess == "yes" {
+		if quest.Yes == 0 {
+			finalGuess(quest)
+		} else {
+			gameRound(quest.Yes)
+		}
+	} else {
+		if quest.No == 0 {
+			finalGuess(quest)
+		} else {
+			gameRound(quest.No)
+		}
+	}
 }
 
 func main() {
-	questions := initialQuestionList()
-	fmt.Println(questions)
-	
+	initialQuestionList()
+	gameRound(1)
+//	fmt.Println(questions)
+//	fmt.Println(guess)
 }
